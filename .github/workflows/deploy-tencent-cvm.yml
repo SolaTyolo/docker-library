@@ -33,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           NS=$(jq -r '.namespace' images.json)
-          DEFAULT="postgres,redis,rabbitmq,kafka,rustfs,imgproxy,gotenberg,nginx,traefik,opa,alpine"
+          DEFAULT="postgres,redis,rabbitmq,kafka,rustfs,imgproxy,gotenberg,nginx,traefik,dbgate,opa,alpine"
           NAMES="${{ inputs.images }}"
           if [[ -z "${NAMES}" ]]; then
             NAMES="${DEFAULT}"

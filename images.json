@@ -42,7 +42,25 @@
       "name": "node",
       "context": "node/20/alpine",
       "dockerfile": "Dockerfile",
-      "tags": ["20-alpine", "latest"]
+      "tags": ["20-alpine"]
+    },
+    {
+      "name": "node",
+      "context": "node/22/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["22-alpine"]
+    },
+    {
+      "name": "node",
+      "context": "node/24/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["24-alpine", "latest"]
+    },
+    {
+      "name": "python",
+      "context": "python/3.13/data",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.13-data", "latest"]
     },
     {
       "name": "nginx",
@@ -103,6 +121,12 @@
       "context": "traefik/3.1",
       "dockerfile": "Dockerfile",
       "tags": ["3.1", "latest"]
+    },
+    {
+      "name": "dbgate",
+      "context": "dbgate/7.1/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["7.1.13-alpine", "latest"]
     },
     {
       "name": "build",

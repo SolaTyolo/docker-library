@@ -18,6 +18,9 @@ docker-library/
 ├── golang/1.24/alpine/Dockerfile
 ├── golang/1.25/alpine/Dockerfile
 ├── node/20/alpine/Dockerfile
+├── node/22/alpine/Dockerfile
+├── node/24/alpine/Dockerfile
+├── python/3.13/data/Dockerfile
 ├── nginx/1.27/alpine/Dockerfile
 ├── opa/0.69.0/Dockerfile
 ├── postgres/16/               # PG16 + pg_cron + pg_net（与 lowcode-scheduler 一致）
@@ -31,6 +34,7 @@ docker-library/
 ├── imgproxy/4.0/Dockerfile
 ├── gotenberg/8/Dockerfile
 ├── traefik/3.1/Dockerfile
+├── dbgate/7.1/alpine/Dockerfile
 ├── build/ci/Dockerfile        # CI 构建环境（go + docker-cli）
 ├── scripts/
 │   ├── build-push.sh
@@ -51,7 +55,8 @@ docker-library/
 | alpine | 时区 Asia/Shanghai | `3.20`, `latest` |
 | debian | bookworm-slim + ca-certificates | `bookworm-slim`, `latest` |
 | golang | Go 1.22–1.25 Alpine 构建环境（清华 apk 源） | `1.22-alpine` … `1.25-alpine`, `latest` |
-| node | Node 20 Alpine | `20-alpine`, `latest` |
+| node | Node 20–24 Alpine 构建环境 | `20-alpine` … `24-alpine`, `latest` |
+| python | Python 3.13 数据分析环境（清华 pip 源） | `3.13-data`, `latest` |
 | nginx | Nginx Alpine | `alpine`, `latest` |
 | opa | Open Policy Agent 0.69 | `0.69.0`, `latest` |
 | postgres | PG16 + pg_cron + pg_net | `16-pgcron-pgnet`, `latest` |
@@ -62,6 +67,7 @@ docker-library/
 | imgproxy | 图片变换（S3 直读） | `4.0.3`, `latest` |
 | gotenberg | Office → PDF 文档转换 | `8`, `latest` |
 | traefik | 反向代理 / API 网关 | `3.1`, `latest` |
+| dbgate | 数据库管理 Web 平台 | `7.1.13-alpine`, `latest` |
 | build | CI：golang + docker-cli + 编译工具链 | `ci`, `latest` |
 
 新增镜像：在 `<name>/<version>/<variant>/` 下添加 `Dockerfile`，并在 `images.json` 中登记 `name`、`context`（指向该目录）、`dockerfile`（固定为 `Dockerfile`）、`tags`。
