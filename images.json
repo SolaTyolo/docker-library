@@ -1,0 +1,114 @@
+{
+  "registry": "ccr.ccs.tencentyun.com",
+  "namespace": "postship",
+  "images": [
+    {
+      "name": "alpine",
+      "context": "alpine/3.20",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.20", "latest"]
+    },
+    {
+      "name": "debian",
+      "context": "debian/bookworm-slim",
+      "dockerfile": "Dockerfile",
+      "tags": ["bookworm-slim", "latest"]
+    },
+    {
+      "name": "golang",
+      "context": "golang/1.22/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.22-alpine"]
+    },
+    {
+      "name": "golang",
+      "context": "golang/1.23/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.23-alpine"]
+    },
+    {
+      "name": "golang",
+      "context": "golang/1.24/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.24-alpine"]
+    },
+    {
+      "name": "golang",
+      "context": "golang/1.25/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.25-alpine", "latest"]
+    },
+    {
+      "name": "node",
+      "context": "node/20/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["20-alpine", "latest"]
+    },
+    {
+      "name": "nginx",
+      "context": "nginx/1.27/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["alpine", "latest"]
+    },
+    {
+      "name": "opa",
+      "context": "opa/0.69.0",
+      "dockerfile": "Dockerfile",
+      "tags": ["0.69.0", "latest"]
+    },
+    {
+      "name": "postgres",
+      "context": "postgres/16",
+      "dockerfile": "Dockerfile",
+      "tags": ["16-pgcron-pgnet", "latest"]
+    },
+    {
+      "name": "redis",
+      "context": "redis/7/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["7", "latest"]
+    },
+    {
+      "name": "rabbitmq",
+      "context": "rabbitmq/3.13/management-alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.13-management", "latest"]
+    },
+    {
+      "name": "kafka",
+      "context": "kafka/3.9",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.9", "latest"]
+    },
+    {
+      "name": "rustfs",
+      "context": "rustfs/1.0",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.0.0-beta.3", "latest"]
+    },
+    {
+      "name": "imgproxy",
+      "context": "imgproxy/4.0",
+      "dockerfile": "Dockerfile",
+      "tags": ["4.0.3", "latest"]
+    },
+    {
+      "name": "gotenberg",
+      "context": "gotenberg/8",
+      "dockerfile": "Dockerfile",
+      "tags": ["8", "latest"]
+    },
+    {
+      "name": "traefik",
+      "context": "traefik/3.1",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.1", "latest"]
+    },
+    {
+      "name": "build",
+      "context": "build/ci",
+      "dockerfile": "Dockerfile",
+      "tags": ["ci", "latest"]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+name: Build and push base images
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image name (empty = changed dirs or all on dispatch)'
+        required: false
+        default: ''
+      push:
+        description: 'Push to Tencent CCR'
+        type: boolean
+        default: true
+
+concurrency:
+  group: build-push-images-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ccr.ccs.tencentyun.com
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      namespace: ${{ steps.matrix.outputs.namespace }}
+      should_build: ${{ steps.matrix.outputs.should_build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute build matrix
+        id: matrix
+        run: |
+          set -euo pipefail
+          NS=$(jq -r '.namespace' images.json)
+          echo "namespace=${NS}" >> "${GITHUB_OUTPUT}"
+
+          if [[ -n "${{ inputs.image }}" ]]; then
+            MATRIX=$(jq -c --arg n "${{ inputs.image }}" \
+              '[.images[] | select(.name == $n)]' images.json)
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            MATRIX=$(jq -c '[.images[]]' images.json)
+          else
+            MATRIX=$(bash scripts/changed-images.sh "origin/${{ github.event.repository.default_branch || 'main' }}")
+          fi
+
+          COUNT=$(echo "${MATRIX}" | jq 'length')
+          if [[ "${COUNT}" -eq 0 ]]; then
+            echo "should_build=false" >> "${GITHUB_OUTPUT}"
+            echo "matrix=[]" >> "${GITHUB_OUTPUT}"
+          else
+            echo "should_build=true" >> "${GITHUB_OUTPUT}"
+            echo "matrix=${MATRIX}" >> "${GITHUB_OUTPUT}"
+          fi
+
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Tencent CCR
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.event_name != 'workflow_dispatch' || inputs.push)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.TENCENT_REGISTRY_USERNAME }}
+          password: ${{ secrets.TENCENT_REGISTRY_PASSWORD }}
+
+      - name: Resolve image tags
+        id: meta
+        run: |
+          set -euo pipefail
+          NS="${{ needs.prepare.outputs.namespace }}"
+          NAME="${{ matrix.name }}"
+          CONTEXT="${{ matrix.context }}"
+          SHA="${GITHUB_SHA::7}"
+          {
+            jq -r --arg n "${NAME}" --arg ctx "${CONTEXT}" --arg reg "${{ env.REGISTRY }}" --arg ns "${NS}" \
+              '.images[] | select(.name == $n and .context == $ctx) | .tags[] | "\($reg)/\($ns)/\($n):\(.)"' \
+              images.json
+            echo "${{ env.REGISTRY }}/${NS}/${NAME}:sha-${SHA}"
+          } > tags.txt
+          echo "tags<<EOF" >> "${GITHUB_OUTPUT}"
+          cat tags.txt >> "${GITHUB_OUTPUT}"
+          echo "EOF" >> "${GITHUB_OUTPUT}"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: >-
+            ${{ github.event_name != 'pull_request' &&
+                (github.event_name != 'workflow_dispatch' || inputs.push) }}
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
