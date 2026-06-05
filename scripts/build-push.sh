@@ -7,7 +7,7 @@ MANIFEST="${ROOT}/images.json"
 
 REGISTRY="${REGISTRY:-$(jq -r '.registry' "${MANIFEST}")}"
 NAMESPACE="${NAMESPACE:-$(jq -r '.namespace' "${MANIFEST}")}"
-PLATFORM="${PLATFORM:-linux/amd64}"
+PLATFORM="${PLATFORM:-linux/amd64,linux/arm64}"
 IMAGE_NAME="${1:-}"
 PUSH="${PUSH:-1}"
 
@@ -21,13 +21,13 @@ Usage:
 Environment:
   REGISTRY   默认读取 images.json（ccr.ccs.tencentyun.com）
   NAMESPACE  默认 solat（读取 images.json）
-  PUSH=0     仅构建，不推送
-  PLATFORM   默认 linux/amd64
+  PUSH=0     仅构建，不推送（多架构时仅 load 本机对应平台）
+  PLATFORM   默认 linux/amd64,linux/arm64（Linux x86_64 + macOS Apple Silicon）
 
 Examples:
   docker login ccr.ccs.tencentyun.com -u <账号ID> -p <密码>
   ./scripts/build-push.sh postgres
-  PUSH=0 ./scripts/build-push.sh golang
+  PUSH=0 PLATFORM=linux/arm64 ./scripts/build-push.sh redis
 EOF
 }
 
@@ -38,23 +38,49 @@ require_jq() {
   }
 }
 
+local_platform() {
+  case "$(uname -m)" in
+    x86_64|amd64) echo "linux/amd64" ;;
+    arm64|aarch64) echo "linux/arm64" ;;
+    *) echo "linux/amd64" ;;
+  esac
+}
+
+build_platform() {
+  if [[ "${PUSH}" == "1" || "${PLATFORM}" != *","* ]]; then
+    echo "${PLATFORM}"
+  else
+    local_platform
+  fi
+}
+
+build_output_args() {
+  if [[ "${PUSH}" == "1" ]]; then
+    echo --push
+  else
+    echo --load
+  fi
+}
+
 build_row() {
   local row="$1"
-  local name context dockerfile tags_json tag ref
+  local name context dockerfile tags_json tag ref platform
   name="$(echo "${row}" | jq -r '.name')"
   context="$(echo "${row}" | jq -r '.context')"
   dockerfile="$(echo "${row}" | jq -r '.dockerfile')"
   tags_json="$(echo "${row}" | jq -c '.tags')"
+  platform="$(build_platform)"
 
   while IFS= read -r tag; do
+    [[ "${tag}" == "latest" ]] && continue
     ref="${REGISTRY}/${NAMESPACE}/${name}:${tag}"
-    echo "==> build ${ref} (${context})"
+    echo "==> build ${ref} (${context}, ${platform})"
     docker buildx build \
-      --platform "${PLATFORM}" \
+      --platform "${platform}" \
       -f "${ROOT}/${context}/${dockerfile}" \
       -t "${ref}" \
       "${ROOT}/${context}" \
-      $([[ "${PUSH}" == "1" ]] && echo --push || echo --load)
+      $(build_output_args)
   done < <(echo "${tags_json}" | jq -r '.[]')
 }
 

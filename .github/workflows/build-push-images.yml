@@ -91,13 +91,9 @@ jobs:
           NS="${{ needs.prepare.outputs.namespace }}"
           NAME="${{ matrix.name }}"
           CONTEXT="${{ matrix.context }}"
-          SHA="${GITHUB_SHA::7}"
-          {
-            jq -r --arg n "${NAME}" --arg ctx "${CONTEXT}" --arg reg "${{ env.REGISTRY }}" --arg ns "${NS}" \
-              '.images[] | select(.name == $n and .context == $ctx) | .tags[] | "\($reg)/\($ns)/\($n):\(.)"' \
-              images.json
-            echo "${{ env.REGISTRY }}/${NS}/${NAME}:sha-${SHA}"
-          } > tags.txt
+          jq -r --arg n "${NAME}" --arg ctx "${CONTEXT}" --arg reg "${{ env.REGISTRY }}" --arg ns "${NS}" \
+            '.images[] | select(.name == $n and .context == $ctx) | .tags[] | "\($reg)/\($ns)/\($n):\(.)"' \
+            images.json > tags.txt
           echo "tags<<EOF" >> "${GITHUB_OUTPUT}"
           cat tags.txt >> "${GITHUB_OUTPUT}"
           echo "EOF" >> "${GITHUB_OUTPUT}"
@@ -107,7 +103,7 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.context }}/${{ matrix.dockerfile }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: >-
             ${{ github.event_name != 'pull_request' &&
                 (github.event_name != 'workflow_dispatch' || inputs.push) }}
