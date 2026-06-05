@@ -20,7 +20,7 @@ Usage:
 
 Environment:
   REGISTRY   默认读取 images.json（ccr.ccs.tencentyun.com）
-  NAMESPACE  默认 postship
+  NAMESPACE  默认 solat（读取 images.json）
   PUSH=0     仅构建，不推送
   PLATFORM   默认 linux/amd64
 

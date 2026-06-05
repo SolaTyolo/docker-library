@@ -1,16 +1,25 @@
 # docker-library
 
-Postship 团队的基础 Docker 镜像仓库：将上游官方镜像或定制 Dockerfile **同步/构建** 后推送到**腾讯云容器镜像服务（CCR）**，供 `postship/docker-library` 与各业务仓库在 CI、CVM 上拉取使用。
+面向**国内网络环境**的基础 Docker 镜像仓库：将 Docker Hub / 上游官方镜像或定制 Dockerfile **同步/构建** 后推送到**腾讯云容器镜像服务（CCR）**，供 CI、CVM 及本地开发从国内节点快速拉取，避免直连国外 registry 慢、超时或不稳定的问题。
 
-目录约定参考 [docker-library](https://github.com/docker-library)（`<name>/<version>/<variant>/Dockerfile`），发布与登录方式对齐 [postship/docker-library](https://github.com/postship/docker-library) 中的 `ccr.ccs.tencentyun.com` 约定。
+目录约定参考 [docker-library](https://github.com/docker-library)（`<name>/<version>/<variant>/Dockerfile`）。
+
+## 国内加速设计
+
+| 层面 | 做法 |
+|------|------|
+| **镜像分发** | 统一推送到腾讯云 CCR（`ccr.ccs.tencentyun.com`），拉取走国内 CDN |
+| **构建基础层** | Alpine 系镜像替换为清华 apk 源；Python 使用清华 pip 源 |
+| **运行时默认** | 全量镜像设置 `TZ=Asia/Shanghai` |
+| **本地 Docker** | 构建时可配置腾讯云镜像加速：`https://mirror.ccs.tencentyun.com` |
 
 **镜像地址格式：**
 
 ```text
-ccr.ccs.tencentyun.com/<namespace>/<name>:<tag>
+ccr.ccs.tencentyun.com/solat/<name>:<tag>
 ```
 
-默认 `namespace` 为 `postship`，例如 `ccr.ccs.tencentyun.com/postship/postgres:16-pgcron-pgnet`。
+例如 `ccr.ccs.tencentyun.com/solat/postgres:16-pgcron-pgnet`。
 
 ## 目录结构
 
@@ -60,8 +69,7 @@ docker-library/
 │   ├── build-push.sh
 │   └── changed-images.sh
 └── .github/workflows/
-    ├── build-push-images.yml
-    └── deploy-tencent-cvm.yml
+    └── build-push-images.yml
 ```
 
 ## 镜像列表
@@ -90,7 +98,7 @@ docker-library/
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
-| postgres | PG16 + pg_cron + pg_net（与 lowcode-scheduler 一致） | `16-pgcron-pgnet`, `latest` |
+| postgres | PG16 + pg_cron + pg_net | `16-pgcron-pgnet`, `latest` |
 | redis | Redis 7 Alpine | `7`, `latest` |
 | elasticsearch | Elasticsearch 7 / 8 搜索与分析引擎 | `7.17.28`, `8.19.15`, `latest` |
 | rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.0-beta.3`, `latest` |
@@ -160,21 +168,19 @@ PUSH=0 ./scripts/build-push.sh loki
 
 # 构建全部
 ./scripts/build-push.sh --all
-
-# 自定义命名空间（默认 postship）
-NAMESPACE=sola ./scripts/build-push.sh redis
 ```
 
 多版本/多变体：在同镜像名下新增版本或变体子目录（如 `golang/1.23/alpine/Dockerfile`），并在 `images.json` 中增加对应条目。每次推送还会额外打上 `sha-<7位commit>` 标签。
 
 ## GitHub Actions
 
-### 1. `build-push-images.yml` — 构建并推送到 CCR
+`build-push-images.yml` — 构建并推送到腾讯云 CCR（TCR 个人版）。
 
 | 触发 | 行为 |
 |------|------|
-| push / PR `main` | 仅构建有改动的镜像目录；PR 只 build 不 push |
-| `workflow_dispatch` | 可指定 `image` 或留空构建全部 |
+| push `main` / `master` | 构建有改动的镜像并 **push 到 CCR** |
+| PR | 仅构建验证，不 push |
+| `workflow_dispatch` | 可指定 `image` 或留空构建全部；`push` 默认开启，可关闭 |
 
 **所需 Secrets（Repository → Settings → Secrets）：**
 
@@ -183,69 +189,61 @@ NAMESPACE=sola ./scripts/build-push.sh redis
 | `TENCENT_REGISTRY_USERNAME` | CCR 登录用户名（个人版一般为腾讯云账号 ID） |
 | `TENCENT_REGISTRY_PASSWORD` | CCR 登录密码（控制台「访问凭证」中设置） |
 
-### 2. `deploy-tencent-cvm.yml` — 在腾讯云 CVM 上拉取镜像
+## 使用示例
 
-在基础镜像 **构建 workflow 成功** 后自动执行（也可手动 `workflow_dispatch`），通过 SSH 登录 CVM、`docker login` 后 `docker pull` 基础设施相关镜像。
-
-**所需 Secrets：**
-
-| Secret | 说明 |
-|--------|------|
-| `DEPLOY_HOST` | CVM 公网 IP 或域名 |
-| `DEPLOY_USER` | SSH 用户（如 `ubuntu`） |
-| `DEPLOY_SSH_KEY` | SSH 私钥全文 |
-| `DEPLOY_PORT` | 可选，默认 22 |
-| `DEPLOY_COMPOSE_DIR` | 可选，服务器上 `docker-compose.infra.yml` 所在目录；设置后会执行 `compose pull && up -d` |
-| `TENCENT_REGISTRY_*` | 同构建 workflow，用于 CVM 上 docker login |
-
-手动部署时可传 `images`，逗号分隔，例如：`postgres,redis,grafana,loki,prometheus,elasticsearch`。
-
-## 与 postship/docker-library 的关系
-
-| 仓库 | 职责 |
-|------|------|
-| **本仓库** | 基础/中间镜像的定义与发布到 CCR |
-| **postship/docker-library** | 本地/服务器编排（compose）、init SQL、install 脚本、临时 token 拉私有镜像 |
-
-将 compose 中的镜像逐步改为本仓库地址，例如：
+在 `docker-compose.yml` 或 CI 中直接引用 CCR 地址，替代 Docker Hub 等国外源：
 
 ```yaml
-# 由
-image: ccr.ccs.tencentyun.com/sola/redis:7
-# 改为
-image: ccr.ccs.tencentyun.com/postship/redis:7
+image: ccr.ccs.tencentyun.com/solat/redis:7
+image: ccr.ccs.tencentyun.com/solat/postgres:16-pgcron-pgnet
+image: ccr.ccs.tencentyun.com/solat/grafana:11.6.0
+image: ccr.ccs.tencentyun.com/solat/loki:3.4.6
+image: ccr.ccs.tencentyun.com/solat/elasticsearch:8.19.15
+image: ccr.ccs.tencentyun.com/solat/elasticsearch:7.17.28   # ES 7 存量兼容
+image: ccr.ccs.tencentyun.com/solat/geoserver:2.27.1
+image: ccr.ccs.tencentyun.com/solat/openbao:2.4.4
+image: ccr.ccs.tencentyun.com/solat/woodpecker-server:v3.15.0
+image: ccr.ccs.tencentyun.com/solat/woodpecker-agent:v3.15.0
 ```
 
-`postgres` 与 `lowcode-scheduler/docker/postgres` 保持一致；scheduler 侧可改为直接引用 CCR：
+## 本地镜像加速配置
 
-`ccr.ccs.tencentyun.com/postship/postgres:16-pgcron-pgnet`
+`registry-mirrors` 用于加速 **Docker Hub** 等公共源的 `docker pull` / `docker build`（Dockerfile 里的 `FROM alpine` 等）。本仓库已发布到 CCR 的镜像（`ccr.ccs.tencentyun.com/solat/...`）直接拉取即可，无需走 mirror。
 
-可观测性与 GIS 相关 compose 示例：
+推荐腾讯云加速地址：`https://mirror.ccs.tencentyun.com`
 
-```yaml
-image: ccr.ccs.tencentyun.com/postship/grafana:11.6.0
-image: ccr.ccs.tencentyun.com/postship/loki:3.4.6
-image: ccr.ccs.tencentyun.com/postship/elasticsearch:8.19.15
-image: ccr.ccs.tencentyun.com/postship/elasticsearch:7.17.28   # ES 7 存量兼容
-image: ccr.ccs.tencentyun.com/postship/geoserver:2.27.1
-image: ccr.ccs.tencentyun.com/postship/openbao:2.4.4
-image: ccr.ccs.tencentyun.com/postship/woodpecker-server:v3.15.0
-image: ccr.ccs.tencentyun.com/postship/woodpecker-agent:v3.15.0
+### Linux
+
+编辑 `/etc/docker/daemon.json`（不存在则新建）：
+
+```json
+{
+  "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
+}
 ```
 
-## 腾讯云 CCR 配置步骤
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
 
-1. 开通 [容器镜像服务](https://console.cloud.tencent.com/tcr) 个人版。
-2. 创建命名空间（与 `images.json` 中 `namespace` 一致，如 `postship`）。
-3. 在「访问凭证」设置固定密码，写入 GitHub Secrets。
-4. （可选）在 CVM 安装 Docker，开放 22 端口供 Actions SSH 部署。
+验证：`docker info | grep -A5 "Registry Mirrors"`
 
-国内构建可配置 Docker 镜像加速：`https://mirror.ccs.tencentyun.com`
+### macOS / Windows（Docker Desktop）
 
-## 参考
+**Settings → Docker Engine**，在 JSON 中加入 `registry-mirrors`，点击 **Apply & restart**：
 
-- [docker-library](https://github.com/docker-library) — 官方镜像仓库目录约定
-- [Grafana Loki 文档](https://grafana.com/docs/loki/latest/) / [Alloy 迁移指南](https://grafana.com/docs/alloy/latest/set-up/migrate/from-promtail/)
-- [Woodpecker CI 文档](https://woodpecker-ci.org/docs)
-- postship/docker-library — CCR 登录、`install.sh infra`、compose 镜像引用
-- [腾讯云 CCR 推送文档](https://cloud.tencent.com/document/product/1141/39271)
+```json
+{
+  "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
+}
+```
+
+macOS 也可直接编辑 `~/.docker/daemon.json`，保存后重启 Docker Desktop。
+
+### 拉取本仓库镜像
+
+```bash
+docker login ccr.ccs.tencentyun.com
+docker pull ccr.ccs.tencentyun.com/solat/redis:7
+```

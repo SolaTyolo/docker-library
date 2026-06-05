@@ -1,6 +1,6 @@
 {
   "registry": "ccr.ccs.tencentyun.com",
-  "namespace": "postship",
+  "namespace": "solat",
   "images": [
     {
       "name": "alpine",
