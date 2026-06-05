@@ -133,6 +133,72 @@
       "context": "build/ci",
       "dockerfile": "Dockerfile",
       "tags": ["ci", "latest"]
+    },
+    {
+      "name": "grafana",
+      "context": "grafana/11.6",
+      "dockerfile": "Dockerfile",
+      "tags": ["11.6.0", "latest"]
+    },
+    {
+      "name": "loki",
+      "context": "loki/3.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.4.6", "latest"]
+    },
+    {
+      "name": "promtail",
+      "context": "promtail/3.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.4.6", "latest"]
+    },
+    {
+      "name": "alloy",
+      "context": "alloy/1.7",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.7.5", "latest"]
+    },
+    {
+      "name": "prometheus",
+      "context": "prometheus/3.3",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.3.1", "latest"]
+    },
+    {
+      "name": "elasticsearch",
+      "context": "elasticsearch/7.17",
+      "dockerfile": "Dockerfile",
+      "tags": ["7.17.28"]
+    },
+    {
+      "name": "elasticsearch",
+      "context": "elasticsearch/8.19",
+      "dockerfile": "Dockerfile",
+      "tags": ["8.19.15", "latest"]
+    },
+    {
+      "name": "geoserver",
+      "context": "geoserver/2.27",
+      "dockerfile": "Dockerfile",
+      "tags": ["2.27.1", "latest"]
+    },
+    {
+      "name": "openbao",
+      "context": "openbao/2.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["2.4.4", "latest"]
+    },
+    {
+      "name": "woodpecker-server",
+      "context": "woodpecker-server/3.15",
+      "dockerfile": "Dockerfile",
+      "tags": ["v3.15.0", "latest"]
+    },
+    {
+      "name": "woodpecker-agent",
+      "context": "woodpecker-agent/3.15",
+      "dockerfile": "Dockerfile",
+      "tags": ["v3.15.0", "latest"]
     }
   ]
 }
