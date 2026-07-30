@@ -19,7 +19,7 @@
 ccr.ccs.tencentyun.com/solat/<name>:<tag>
 ```
 
-例如 `ccr.ccs.tencentyun.com/solat/postgres:16-pgcron-pgnet`。
+例如 `ccr.ccs.tencentyun.com/solat/postgres:16`。
 
 ## 目录结构
 
@@ -39,7 +39,7 @@ docker-library/
 ├── woodpecker-server/3.15/Dockerfile   # CI/CD（Woodpecker）
 ├── woodpecker-agent/3.15/Dockerfile
 │
-├── postgres/16/                   # 数据存储（PG16 + pg_cron + pg_net）
+├── postgres/16/                   # 数据存储（PG16 + PostGIS / pg_cron / pgvector / PgBouncer）
 ├── redis/7/alpine/Dockerfile
 ├── elasticsearch/7.17/Dockerfile
 ├── elasticsearch/8.19/Dockerfile
@@ -98,7 +98,7 @@ docker-library/
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
-| postgres | PG16 + pg_cron + pg_net | `16-pgcron-pgnet`, `latest` |
+| postgres | PG16 + PostGIS / pg_cron / pgvector / PgBouncer（仅安装，不预启用） | `16` |
 | redis | Redis 7 Alpine | `7`, `latest` |
 | elasticsearch | Elasticsearch 7 / 8 搜索与分析引擎 | `7.17.28`, `8.19.15`, `latest` |
 | rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.0-beta.3`, `latest` |
@@ -195,7 +195,7 @@ PUSH=0 ./scripts/build-push.sh loki
 
 ```yaml
 image: ccr.ccs.tencentyun.com/solat/redis:7
-image: ccr.ccs.tencentyun.com/solat/postgres:16-pgcron-pgnet
+image: ccr.ccs.tencentyun.com/solat/postgres:16
 image: ccr.ccs.tencentyun.com/solat/grafana:11.6.0
 image: ccr.ccs.tencentyun.com/solat/loki:3.4.6
 image: ccr.ccs.tencentyun.com/solat/elasticsearch:8.19.15

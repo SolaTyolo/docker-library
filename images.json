@@ -76,15 +76,9 @@
     },
     {
       "name": "postgres",
-      "context": "postgres/16/base",
-      "dockerfile": "Dockerfile",
-      "tags": ["16"]
-    },
-    {
-      "name": "postgres",
       "context": "postgres/16",
       "dockerfile": "Dockerfile",
-      "tags": ["16-pgcron-pgnet"]
+      "tags": ["16"]
     },
     {
       "name": "redis",
