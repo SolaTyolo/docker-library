@@ -64,6 +64,7 @@ docker-library/
 ├── gotenberg/8/Dockerfile
 ├── dbgate/7.1/alpine/Dockerfile
 ├── opa/0.69.0/Dockerfile
+├── litellm/1.94/Dockerfile         # LLM 网关（LiteLLM Proxy）
 │
 ├── scripts/
 │   ├── build-push.sh
@@ -146,6 +147,7 @@ docker-library/
 | imgproxy | 图片变换（S3 直读） | `4.0.3`, `latest` |
 | gotenberg | Office → PDF 文档转换 | `8`, `latest` |
 | dbgate | 数据库管理 Web 平台 | `7.1.13-alpine`, `latest` |
+| litellm | LiteLLM Proxy（统一 LLM API 网关） | `v1.94.0`, `latest` |
 
 ### 新增镜像
 
@@ -204,6 +206,7 @@ image: ccr.ccs.tencentyun.com/solat/geoserver:2.27.1
 image: ccr.ccs.tencentyun.com/solat/openbao:2.4.4
 image: ccr.ccs.tencentyun.com/solat/woodpecker-server:v3.15.0
 image: ccr.ccs.tencentyun.com/solat/woodpecker-agent:v3.15.0
+image: ccr.ccs.tencentyun.com/solat/litellm:v1.94.0
 ```
 
 ## 本地镜像加速配置
