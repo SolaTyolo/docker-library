@@ -7,8 +7,11 @@ RUN apk add --no-cache git build-base linux-headers cmake bash python3 py3-pip \
     https://github.com/RedisBloom/RedisBloom.git /tmp/RedisBloom
 
 WORKDIR /tmp/RedisBloom
+# Fail the build if make did not emit redisbloom.so (empty install path used to produce a broken image).
 RUN make \
-  && install -D "$(find bin -name redisbloom.so -type f | head -1)" /out/redisbloom.so
+  && SO="$(find /tmp/RedisBloom -name redisbloom.so -type f | head -1)" \
+  && test -n "${SO}" && test -f "${SO}" \
+  && install -D "${SO}" /out/redisbloom.so
 
 FROM redis:7-alpine
 
@@ -19,5 +22,6 @@ RUN apk add --no-cache tzdata \
   && echo "${TZ}" > /etc/timezone
 
 COPY --from=builder /out/redisbloom.so /usr/local/lib/redis/modules/redisbloom.so
+RUN test -f /usr/local/lib/redis/modules/redisbloom.so
 
 CMD ["redis-server", "--loadmodule", "/usr/local/lib/redis/modules/redisbloom.so"]

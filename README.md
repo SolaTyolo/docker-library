@@ -32,14 +32,14 @@ docker-library/
 ├── alpine/3.20/Dockerfile         # 基础系统
 ├── debian/bookworm-slim/Dockerfile
 │
-├── golang/1.22|1.23|1.24|1.25/alpine/Dockerfile   # 语言构建环境
+├── golang/1.22|1.23|1.24|1.25|1.26/alpine/Dockerfile   # 语言构建环境
 ├── node/20|22|24/alpine/Dockerfile
 ├── python/3.13/data/Dockerfile
 ├── build/ci/Dockerfile            # CI：go + docker-cli
 ├── woodpecker-server/3.15/Dockerfile   # CI/CD（Woodpecker）
 ├── woodpecker-agent/3.15/Dockerfile
 │
-├── postgres/16/                   # 数据存储（PG16 + PostGIS / pg_cron / pgvector / PgBouncer）
+├── postgres/15|16/                # 数据存储（PG + PostGIS / pg_cron / pgvector / PgBouncer）
 ├── redis/7/alpine/Dockerfile
 ├── elasticsearch/7.17/Dockerfile
 ├── elasticsearch/8.19/Dockerfile
@@ -81,7 +81,7 @@ docker-library/
 |------|------|----------|
 | alpine | 时区 Asia/Shanghai | `3.20`, `latest` |
 | debian | bookworm-slim + ca-certificates | `bookworm-slim`, `latest` |
-| golang | Go 1.22–1.25 Alpine 构建环境（清华 apk 源） | `1.22-alpine` … `1.25-alpine`, `latest` |
+| golang | Go 1.22–1.26 Alpine 构建环境（清华 apk 源） | `1.22-alpine` … `1.26-alpine`, `latest` |
 | node | Node 20–24 Alpine 构建环境 | `20-alpine` … `24-alpine`, `latest` |
 | python | Python 3.13 数据分析环境（清华 pip 源） | `3.13-data`, `latest` |
 | build | CI：golang + docker-cli + 编译工具链 | `ci`, `latest` |
@@ -99,7 +99,7 @@ docker-library/
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
-| postgres | PG16 + PostGIS / pg_cron / pgvector / PgBouncer（仅安装，不预启用） | `16` |
+| postgres | PG15 / PG16 + PostGIS / pg_cron / pgvector / PgBouncer（仅安装，不预启用） | `15`, `16` |
 | redis | Redis 7 Alpine | `7`, `latest` |
 | elasticsearch | Elasticsearch 7 / 8 搜索与分析引擎 | `7.17.28`, `8.19.15`, `latest` |
 | rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.0-beta.3`, `latest` |
@@ -198,6 +198,7 @@ PUSH=0 ./scripts/build-push.sh loki
 ```yaml
 image: ccr.ccs.tencentyun.com/solat/redis:7
 image: ccr.ccs.tencentyun.com/solat/postgres:16
+image: ccr.ccs.tencentyun.com/solat/postgres:15
 image: ccr.ccs.tencentyun.com/solat/grafana:11.6.0
 image: ccr.ccs.tencentyun.com/solat/loki:3.4.6
 image: ccr.ccs.tencentyun.com/solat/elasticsearch:8.19.15

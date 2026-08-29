@@ -39,6 +39,12 @@
       "tags": ["1.25-alpine"]
     },
     {
+      "name": "golang",
+      "context": "golang/1.26/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.26-alpine"]
+    },
+    {
       "name": "node",
       "context": "node/20/alpine",
       "dockerfile": "Dockerfile",
@@ -73,6 +79,12 @@
       "context": "opa/0.69.0",
       "dockerfile": "Dockerfile",
       "tags": ["0.69.0"]
+    },
+    {
+      "name": "postgres",
+      "context": "postgres/15",
+      "dockerfile": "Dockerfile",
+      "tags": ["15"]
     },
     {
       "name": "postgres",
