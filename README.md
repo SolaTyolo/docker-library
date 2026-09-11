@@ -56,9 +56,11 @@ docker-library/
 │
 ├── nginx/1.27/alpine/Dockerfile    # 网关 / 代理
 ├── traefik/3.1/Dockerfile
+├── certbot/5.7/Dockerfile          # Let's Encrypt
 │
 ├── geoserver/2.27/Dockerfile       # GIS
 ├── openbao/2.4/Dockerfile          # 密钥管理（Vault 开源分支）
+├── supabase-auth/2.195/Dockerfile  # Supabase Auth (GoTrue)
 │
 ├── imgproxy/4.0/Dockerfile         # 文档 / 媒体 / 工具
 ├── gotenberg/8/Dockerfile
@@ -136,6 +138,7 @@ docker-library/
 |------|------|----------|
 | nginx | Nginx Alpine | `alpine`, `latest` |
 | traefik | 反向代理 / API 网关 | `3.1`, `latest` |
+| certbot | Let's Encrypt 证书申请与续期 | `v5.7.0`, `latest` |
 | opa | Open Policy Agent 0.69 | `0.69.0`, `latest` |
 
 ### GIS、安全与工具
@@ -144,6 +147,7 @@ docker-library/
 |------|------|----------|
 | geoserver | GeoServer 地图服务（kartoza 镜像） | `2.27.1`, `latest` |
 | openbao | OpenBao 密钥与机密管理（HashiCorp Vault 开源分支） | `2.4.4`, `latest` |
+| supabase-auth | Supabase Auth / GoTrue（身份认证） | `v2.195.0`, `latest` |
 | imgproxy | 图片变换（S3 直读） | `4.0.3`, `latest` |
 | gotenberg | Office → PDF 文档转换 | `8`, `latest` |
 | dbgate | 数据库管理 Web 平台 | `7.1.13-alpine`, `latest` |
@@ -208,7 +212,10 @@ image: ccr.ccs.tencentyun.com/solat/openbao:2.4.4
 image: ccr.ccs.tencentyun.com/solat/woodpecker-server:v3.15.0
 image: ccr.ccs.tencentyun.com/solat/woodpecker-agent:v3.15.0
 image: ccr.ccs.tencentyun.com/solat/litellm:v1.94.0
+image: ccr.ccs.tencentyun.com/solat/supabase-auth:v2.195.0
+image: ccr.ccs.tencentyun.com/solat/certbot:v5.7.0
 ```
+
 
 ## 本地镜像加速配置
 

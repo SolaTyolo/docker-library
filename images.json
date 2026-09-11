@@ -217,6 +217,18 @@
       "context": "litellm/1.94",
       "dockerfile": "Dockerfile",
       "tags": ["v1.94.0"]
+    },
+    {
+      "name": "supabase-auth",
+      "context": "supabase-auth/2.195",
+      "dockerfile": "Dockerfile",
+      "tags": ["v2.195.0"]
+    },
+    {
+      "name": "certbot",
+      "context": "certbot/5.7",
+      "dockerfile": "Dockerfile",
+      "tags": ["v5.7.0"]
     }
   ]
 }
