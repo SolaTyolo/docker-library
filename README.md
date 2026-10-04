@@ -66,8 +66,10 @@ docker-library/
 ├── gis/                           # GIS
 │   └── geoserver/2.27/Dockerfile
 │
-├── security/                      # 安全与身份
-│   ├── openbao/2.4/Dockerfile
+├── security/                      # 密钥与机密
+│   └── openbao/2.4/Dockerfile
+│
+├── auth/                          # 身份认证（Supabase Auth）
 │   └── gotrue/2.195/Dockerfile
 │
 ├── tools/                         # 文档 / 媒体 / 工具
@@ -108,10 +110,10 @@ docker-library/
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
-| postgres | PG15 / PG16 + PostGIS / pg_cron / pgvector / PgBouncer（仅安装，不预启用） | `15`, `16` |
+| postgres | PG15 / PG16 + PostGIS / pgvector / PgBouncer（仅安装，不预启用） | `15`, `16` |
 | redis | Redis 7 Alpine | `7`, `latest` |
 | elasticsearch | Elasticsearch 7 / 8 搜索与分析引擎 | `7.17.28`, `8.19.15`, `latest` |
-| rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.0-beta.3`, `latest` |
+| rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.1`, `latest` |
 
 ### 消息队列
 
@@ -153,12 +155,17 @@ docker-library/
 |------|------|----------|
 | geoserver | GeoServer 地图服务（kartoza 镜像） | `2.27.1`, `latest` |
 
-### 安全与身份
+### 密钥与机密
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
 | openbao | OpenBao 密钥与机密管理（HashiCorp Vault 开源分支） | `2.4.4`, `latest` |
-| gotrue | GoTrue（身份认证） | `v2.195.0`, `latest` |
+
+### 身份认证
+
+| 名称 | 说明 | 主要 tag |
+|------|------|----------|
+| gotrue | Supabase Auth（上游仓库 supabase/auth；镜像仍发布为 gotrue） | `v2.195.0`, `latest` |
 
 ### 文档 / 媒体 / 工具
 

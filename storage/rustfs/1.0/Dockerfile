@@ -1,3 +1,3 @@
-FROM rustfs/rustfs:1.0.0-beta.3
+FROM rustfs/rustfs:1.0.1
 
 ENV TZ=Asia/Shanghai

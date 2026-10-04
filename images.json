@@ -120,7 +120,7 @@
       "name": "rustfs",
       "context": "storage/rustfs/1.0",
       "dockerfile": "Dockerfile",
-      "tags": ["1.0.0-beta.3"]
+      "tags": ["1.0.1"]
     },
     {
       "name": "rabbitmq",
@@ -196,7 +196,7 @@
     },
     {
       "name": "gotrue",
-      "context": "security/gotrue/2.195",
+      "context": "auth/gotrue/2.195",
       "dockerfile": "Dockerfile",
       "tags": ["v2.195.0"]
     },
