@@ -4,231 +4,219 @@
   "images": [
     {
       "name": "alpine",
-      "context": "alpine/3.20",
+      "context": "base/alpine/3.20",
       "dockerfile": "Dockerfile",
       "tags": ["3.20"]
     },
     {
       "name": "debian",
-      "context": "debian/bookworm-slim",
+      "context": "base/debian/bookworm-slim",
       "dockerfile": "Dockerfile",
       "tags": ["bookworm-slim"]
     },
     {
       "name": "golang",
-      "context": "golang/1.22/alpine",
+      "context": "base/golang/1.22/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["1.22-alpine"]
     },
     {
       "name": "golang",
-      "context": "golang/1.23/alpine",
+      "context": "base/golang/1.23/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["1.23-alpine"]
     },
     {
       "name": "golang",
-      "context": "golang/1.24/alpine",
+      "context": "base/golang/1.24/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["1.24-alpine"]
     },
     {
       "name": "golang",
-      "context": "golang/1.25/alpine",
+      "context": "base/golang/1.25/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["1.25-alpine"]
     },
     {
       "name": "golang",
-      "context": "golang/1.26/alpine",
+      "context": "base/golang/1.26/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["1.26-alpine"]
     },
     {
       "name": "node",
-      "context": "node/20/alpine",
+      "context": "base/node/20/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["20-alpine"]
     },
     {
       "name": "node",
-      "context": "node/22/alpine",
+      "context": "base/node/22/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["22-alpine"]
     },
     {
       "name": "node",
-      "context": "node/24/alpine",
+      "context": "base/node/24/alpine",
       "dockerfile": "Dockerfile",
       "tags": ["24-alpine"]
     },
     {
       "name": "python",
-      "context": "python/3.13/data",
+      "context": "base/python/3.13/data",
       "dockerfile": "Dockerfile",
       "tags": ["3.13-data"]
     },
     {
-      "name": "nginx",
-      "context": "nginx/1.27/alpine",
-      "dockerfile": "Dockerfile",
-      "tags": ["alpine"]
-    },
-    {
-      "name": "opa",
-      "context": "opa/0.69.0",
-      "dockerfile": "Dockerfile",
-      "tags": ["0.69.0"]
-    },
-    {
-      "name": "postgres",
-      "context": "postgres/15",
-      "dockerfile": "Dockerfile",
-      "tags": ["15"]
-    },
-    {
-      "name": "postgres",
-      "context": "postgres/16",
-      "dockerfile": "Dockerfile",
-      "tags": ["16"]
-    },
-    {
-      "name": "redis",
-      "context": "redis/7/alpine",
-      "dockerfile": "Dockerfile",
-      "tags": ["7"]
-    },
-    {
-      "name": "rabbitmq",
-      "context": "rabbitmq/3.13/management-alpine",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.13-management"]
-    },
-    {
-      "name": "kafka",
-      "context": "kafka/3.9",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.9"]
-    },
-    {
-      "name": "rustfs",
-      "context": "rustfs/1.0",
-      "dockerfile": "Dockerfile",
-      "tags": ["1.0.0-beta.3"]
-    },
-    {
-      "name": "imgproxy",
-      "context": "imgproxy/4.0",
-      "dockerfile": "Dockerfile",
-      "tags": ["4.0.3"]
-    },
-    {
-      "name": "gotenberg",
-      "context": "gotenberg/8",
-      "dockerfile": "Dockerfile",
-      "tags": ["8"]
-    },
-    {
-      "name": "traefik",
-      "context": "traefik/3.1",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.1"]
-    },
-    {
-      "name": "dbgate",
-      "context": "dbgate/7.1/alpine",
-      "dockerfile": "Dockerfile",
-      "tags": ["7.1.13-alpine"]
-    },
-    {
       "name": "build",
-      "context": "build/ci",
+      "context": "base/build/ci",
       "dockerfile": "Dockerfile",
       "tags": ["ci"]
     },
     {
-      "name": "grafana",
-      "context": "grafana/11.6",
-      "dockerfile": "Dockerfile",
-      "tags": ["11.6.0"]
-    },
-    {
-      "name": "loki",
-      "context": "loki/3.4",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.4.6"]
-    },
-    {
-      "name": "promtail",
-      "context": "promtail/3.4",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.4.6"]
-    },
-    {
-      "name": "alloy",
-      "context": "alloy/1.7",
-      "dockerfile": "Dockerfile",
-      "tags": ["1.7.5"]
-    },
-    {
-      "name": "prometheus",
-      "context": "prometheus/3.3",
-      "dockerfile": "Dockerfile",
-      "tags": ["3.3.1"]
-    },
-    {
-      "name": "elasticsearch",
-      "context": "elasticsearch/7.17",
-      "dockerfile": "Dockerfile",
-      "tags": ["7.17.28"]
-    },
-    {
-      "name": "elasticsearch",
-      "context": "elasticsearch/8.19",
-      "dockerfile": "Dockerfile",
-      "tags": ["8.19.15"]
-    },
-    {
-      "name": "geoserver",
-      "context": "geoserver/2.27",
-      "dockerfile": "Dockerfile",
-      "tags": ["2.27.1"]
-    },
-    {
-      "name": "openbao",
-      "context": "openbao/2.4",
-      "dockerfile": "Dockerfile",
-      "tags": ["2.4.4"]
-    },
-    {
       "name": "woodpecker-server",
-      "context": "woodpecker-server/3.15",
+      "context": "cicd/woodpecker-server/3.15",
       "dockerfile": "Dockerfile",
       "tags": ["v3.15.0"]
     },
     {
       "name": "woodpecker-agent",
-      "context": "woodpecker-agent/3.15",
+      "context": "cicd/woodpecker-agent/3.15",
       "dockerfile": "Dockerfile",
       "tags": ["v3.15.0"]
     },
     {
-      "name": "litellm",
-      "context": "litellm/1.94",
+      "name": "postgres",
+      "context": "storage/postgres/15",
       "dockerfile": "Dockerfile",
-      "tags": ["v1.94.0"]
+      "tags": ["15"]
     },
     {
-      "name": "supabase-auth",
-      "context": "supabase-auth/2.195",
+      "name": "postgres",
+      "context": "storage/postgres/16",
+      "dockerfile": "Dockerfile",
+      "tags": ["16"]
+    },
+    {
+      "name": "redis",
+      "context": "storage/redis/7/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["7"]
+    },
+    {
+      "name": "elasticsearch",
+      "context": "storage/elasticsearch/7.17",
+      "dockerfile": "Dockerfile",
+      "tags": ["7.17.28"]
+    },
+    {
+      "name": "elasticsearch",
+      "context": "storage/elasticsearch/8.19",
+      "dockerfile": "Dockerfile",
+      "tags": ["8.19.15"]
+    },
+    {
+      "name": "rustfs",
+      "context": "storage/rustfs/1.0",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.0.0-beta.3"]
+    },
+    {
+      "name": "rabbitmq",
+      "context": "messaging/rabbitmq/3.13/management-alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.13-management"]
+    },
+    {
+      "name": "kafka",
+      "context": "messaging/kafka/3.9",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.9"]
+    },
+    {
+      "name": "grafana",
+      "context": "observability/grafana/11.6",
+      "dockerfile": "Dockerfile",
+      "tags": ["11.6.0"]
+    },
+    {
+      "name": "prometheus",
+      "context": "observability/prometheus/3.3",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.3.1"]
+    },
+    {
+      "name": "loki",
+      "context": "observability/loki/3.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.4.6"]
+    },
+    {
+      "name": "promtail",
+      "context": "observability/promtail/3.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.4.6"]
+    },
+    {
+      "name": "alloy",
+      "context": "observability/alloy/1.7",
+      "dockerfile": "Dockerfile",
+      "tags": ["1.7.5"]
+    },
+    {
+      "name": "nginx",
+      "context": "gateway/nginx/1.27/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["alpine"]
+    },
+    {
+      "name": "traefik",
+      "context": "gateway/traefik/3.1",
+      "dockerfile": "Dockerfile",
+      "tags": ["3.1"]
+    },
+    {
+      "name": "certbot",
+      "context": "gateway/certbot/5.7",
+      "dockerfile": "Dockerfile",
+      "tags": ["v5.7.0"]
+    },
+    {
+      "name": "geoserver",
+      "context": "gis/geoserver/2.27",
+      "dockerfile": "Dockerfile",
+      "tags": ["2.27.1"]
+    },
+    {
+      "name": "openbao",
+      "context": "security/openbao/2.4",
+      "dockerfile": "Dockerfile",
+      "tags": ["2.4.4"]
+    },
+    {
+      "name": "gotrue",
+      "context": "security/gotrue/2.195",
       "dockerfile": "Dockerfile",
       "tags": ["v2.195.0"]
     },
     {
-      "name": "certbot",
-      "context": "certbot/5.7",
+      "name": "imgproxy",
+      "context": "tools/imgproxy/4.0",
       "dockerfile": "Dockerfile",
-      "tags": ["v5.7.0"]
+      "tags": ["4.0.3"]
+    },
+    {
+      "name": "gotenberg",
+      "context": "tools/gotenberg/8",
+      "dockerfile": "Dockerfile",
+      "tags": ["8"]
+    },
+    {
+      "name": "dbgate",
+      "context": "tools/dbgate/7.1/alpine",
+      "dockerfile": "Dockerfile",
+      "tags": ["7.1.13-alpine"]
     }
   ]
 }

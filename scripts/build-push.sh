@@ -98,7 +98,7 @@ build_one() {
 }
 
 list_images() {
-  jq -r '.images[] | "\(.name) (\(.tags[0]))"' "${MANIFEST}"
+  jq -r '.images[] | "\(.context | split("/")[0])\t\(.name) (\(.tags | join(", ")))"' "${MANIFEST}"
 }
 
 main() {

@@ -2,7 +2,7 @@
 
 面向**国内网络环境**的基础 Docker 镜像仓库：将 Docker Hub / 上游官方镜像或定制 Dockerfile **同步/构建** 后推送到**腾讯云容器镜像服务（CCR）**，供 CI、CVM 及本地开发从国内节点快速拉取，避免直连国外 registry 慢、超时或不稳定的问题。
 
-目录约定参考 [docker-library](https://github.com/docker-library)（`<name>/<version>/<variant>/Dockerfile`）。
+目录按**分类 group** 组织，便于查找；CCR 镜像名仍是 `<name>:<tag>`，**不含 group 前缀**。路径约定：`<group>/<name>/<version>/<variant>/Dockerfile`。
 
 ## 国内加速设计
 
@@ -23,50 +23,57 @@ ccr.ccs.tencentyun.com/solat/<name>:<tag>
 
 ## 目录结构
 
-按 **镜像名 / 版本 / 变体** 分层，每层目录内固定使用 `Dockerfile`。
+仓库按 **group / 镜像名 / 版本 / 变体** 分层；`Dockerfile` 固定在最内层。group 只用于目录归类，推送名仍是 `ccr.ccs.tencentyun.com/solat/<name>:<tag>`。
 
 ```text
 docker-library/
 ├── images.json                    # 镜像清单（CI matrix 与本地脚本共用）
 │
-├── alpine/3.20/Dockerfile         # 基础系统
-├── debian/bookworm-slim/Dockerfile
+├── base/                          # 基础与构建
+│   ├── alpine/3.20/Dockerfile
+│   ├── debian/bookworm-slim/Dockerfile
+│   ├── golang/1.22|1.23|1.24|1.25|1.26/alpine/Dockerfile
+│   ├── node/20|22|24/alpine/Dockerfile
+│   ├── python/3.13/data/Dockerfile
+│   └── build/ci/Dockerfile
 │
-├── golang/1.22|1.23|1.24|1.25|1.26/alpine/Dockerfile   # 语言构建环境
-├── node/20|22|24/alpine/Dockerfile
-├── python/3.13/data/Dockerfile
-├── build/ci/Dockerfile            # CI：go + docker-cli
-├── woodpecker-server/3.15/Dockerfile   # CI/CD（Woodpecker）
-├── woodpecker-agent/3.15/Dockerfile
+├── cicd/                          # CI/CD
+│   ├── woodpecker-server/3.15/Dockerfile
+│   └── woodpecker-agent/3.15/Dockerfile
 │
-├── postgres/15|16/                # 数据存储（PG + PostGIS / pg_cron / pgvector / PgBouncer）
-├── redis/7/alpine/Dockerfile
-├── elasticsearch/7.17/Dockerfile
-├── elasticsearch/8.19/Dockerfile
-├── rustfs/1.0/Dockerfile
+├── storage/                       # 数据存储与检索
+│   ├── postgres/15|16/
+│   ├── redis/7/alpine/Dockerfile
+│   ├── elasticsearch/7.17|8.19/Dockerfile
+│   └── rustfs/1.0/Dockerfile
 │
-├── rabbitmq/3.13/management-alpine/Dockerfile     # 消息 / 流
-├── kafka/3.9/Dockerfile
+├── messaging/                     # 消息队列
+│   ├── rabbitmq/3.13/management-alpine/Dockerfile
+│   └── kafka/3.9/Dockerfile
 │
-├── grafana/11.6/Dockerfile        # 可观测性（Grafana 栈）
-├── loki/3.4/Dockerfile
-├── promtail/3.4/Dockerfile
-├── alloy/1.7/Dockerfile
-├── prometheus/3.3/Dockerfile
+├── observability/                 # 可观测性（Grafana 栈）
+│   ├── grafana/11.6/Dockerfile
+│   ├── prometheus/3.3/Dockerfile
+│   ├── loki/3.4/Dockerfile
+│   ├── promtail/3.4/Dockerfile
+│   └── alloy/1.7/Dockerfile
 │
-├── nginx/1.27/alpine/Dockerfile    # 网关 / 代理
-├── traefik/3.1/Dockerfile
-├── certbot/5.7/Dockerfile          # Let's Encrypt
+├── gateway/                       # 网关与基础设施
+│   ├── nginx/1.27/alpine/Dockerfile
+│   ├── traefik/3.1/Dockerfile
+│   └── certbot/5.7/Dockerfile
 │
-├── geoserver/2.27/Dockerfile       # GIS
-├── openbao/2.4/Dockerfile          # 密钥管理（Vault 开源分支）
-├── supabase-auth/2.195/Dockerfile  # Supabase Auth (GoTrue)
+├── gis/                           # GIS
+│   └── geoserver/2.27/Dockerfile
 │
-├── imgproxy/4.0/Dockerfile         # 文档 / 媒体 / 工具
-├── gotenberg/8/Dockerfile
-├── dbgate/7.1/alpine/Dockerfile
-├── opa/0.69.0/Dockerfile
-├── litellm/1.94/Dockerfile         # LLM 网关（LiteLLM Proxy）
+├── security/                      # 安全与身份
+│   ├── openbao/2.4/Dockerfile
+│   └── gotrue/2.195/Dockerfile
+│
+├── tools/                         # 文档 / 媒体 / 工具
+│   ├── imgproxy/4.0/Dockerfile
+│   ├── gotenberg/8/Dockerfile
+│   └── dbgate/7.1/alpine/Dockerfile
 │
 ├── scripts/
 │   ├── build-push.sh
@@ -139,23 +146,31 @@ docker-library/
 | nginx | Nginx Alpine | `alpine`, `latest` |
 | traefik | 反向代理 / API 网关 | `3.1`, `latest` |
 | certbot | Let's Encrypt 证书申请与续期 | `v5.7.0`, `latest` |
-| opa | Open Policy Agent 0.69 | `0.69.0`, `latest` |
 
-### GIS、安全与工具
+### GIS
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
 | geoserver | GeoServer 地图服务（kartoza 镜像） | `2.27.1`, `latest` |
+
+### 安全与身份
+
+| 名称 | 说明 | 主要 tag |
+|------|------|----------|
 | openbao | OpenBao 密钥与机密管理（HashiCorp Vault 开源分支） | `2.4.4`, `latest` |
-| supabase-auth | Supabase Auth / GoTrue（身份认证） | `v2.195.0`, `latest` |
+| gotrue | GoTrue（身份认证） | `v2.195.0`, `latest` |
+
+### 文档 / 媒体 / 工具
+
+| 名称 | 说明 | 主要 tag |
+|------|------|----------|
 | imgproxy | 图片变换（S3 直读） | `4.0.3`, `latest` |
 | gotenberg | Office → PDF 文档转换 | `8`, `latest` |
 | dbgate | 数据库管理 Web 平台 | `7.1.13-alpine`, `latest` |
-| litellm | LiteLLM Proxy（统一 LLM API 网关） | `v1.94.0`, `latest` |
 
 ### 新增镜像
 
-在 `<name>/<version>/<variant>/` 下添加 `Dockerfile`，并在 `images.json` 中登记 `name`、`context`、`dockerfile`（固定为 `Dockerfile`）、`tags`。
+在 `<group>/<name>/<version>/<variant>/` 下添加 `Dockerfile`（group 与上方分类目录一致），并在 `images.json` 中登记 `name`（不含 group）、`context`（含 group 路径）、`dockerfile`（固定为 `Dockerfile`）、`tags`。
 
 ## 本地构建与推送
 
@@ -176,7 +191,7 @@ PUSH=0 ./scripts/build-push.sh loki
 ./scripts/build-push.sh --all
 ```
 
-多版本/多变体：在同镜像名下新增版本或变体子目录（如 `golang/1.23/alpine/Dockerfile`），并在 `images.json` 中增加对应条目。每次推送还会额外打上 `sha-<7位commit>` 标签。
+多版本/多变体：在同 group、同镜像名下新增版本或变体子目录（如 `base/golang/1.23/alpine/Dockerfile`），并在 `images.json` 中增加对应条目。构建/推送仍用镜像名（如 `./scripts/build-push.sh postgres`），不会把 group 写进 CCR 仓库名。
 
 ## GitHub Actions
 
@@ -211,8 +226,7 @@ image: ccr.ccs.tencentyun.com/solat/geoserver:2.27.1
 image: ccr.ccs.tencentyun.com/solat/openbao:2.4.4
 image: ccr.ccs.tencentyun.com/solat/woodpecker-server:v3.15.0
 image: ccr.ccs.tencentyun.com/solat/woodpecker-agent:v3.15.0
-image: ccr.ccs.tencentyun.com/solat/litellm:v1.94.0
-image: ccr.ccs.tencentyun.com/solat/supabase-auth:v2.195.0
+image: ccr.ccs.tencentyun.com/solat/gotrue:v2.195.0
 image: ccr.ccs.tencentyun.com/solat/certbot:v5.7.0
 ```
 
