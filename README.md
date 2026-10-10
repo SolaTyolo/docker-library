@@ -202,13 +202,12 @@ PUSH=0 ./scripts/build-push.sh loki
 
 ## GitHub Actions
 
-`build-push-images.yml` — 构建并推送到腾讯云 CCR（TCR 个人版）。
+`build-push-images.yml` — **仅手动触发**（Actions → Run workflow），构建并推送到腾讯云 CCR（TCR 个人版）。
 
-| 触发 | 行为 |
+| 输入 | 行为 |
 |------|------|
-| push `main` / `master` | 构建有改动的镜像并 **push 到 CCR** |
-| PR | 仅构建验证，不 push |
-| `workflow_dispatch` | 可指定 `image` 或留空构建全部；`push` 默认开启，可关闭 |
+| `image` | 指定 `images.json` 中的镜像名；留空构建全部 |
+| `push` | 默认开启；关闭则只构建不推送 |
 
 **所需 Secrets（Repository → Settings → Secrets）：**
 

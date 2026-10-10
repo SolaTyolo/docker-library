@@ -1,14 +1,10 @@
 name: Build and push base images
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
   workflow_dispatch:
     inputs:
       image:
-        description: 'Image name (empty = changed dirs or all on dispatch)'
+        description: 'Image name from images.json (empty = all)'
         required: false
         default: ''
       push:
@@ -17,7 +13,7 @@ on:
         default: true
 
 concurrency:
-  group: build-push-images-${{ github.ref }}
+  group: build-push-images-${{ github.ref }}-${{ inputs.image }}
   cancel-in-progress: true
 
 env:
@@ -32,8 +28,6 @@ jobs:
       should_build: ${{ steps.matrix.outputs.should_build }}
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - name: Compute build matrix
         id: matrix
@@ -45,10 +39,8 @@ jobs:
           if [[ -n "${{ inputs.image }}" ]]; then
             MATRIX=$(jq -c --arg n "${{ inputs.image }}" \
               '[.images[] | select(.name == $n)]' images.json)
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            MATRIX=$(jq -c '[.images[]]' images.json)
           else
-            MATRIX=$(bash scripts/changed-images.sh "origin/${{ github.event.repository.default_branch || 'main' }}")
+            MATRIX=$(jq -c '[.images[]]' images.json)
           fi
 
           COUNT=$(echo "${MATRIX}" | jq 'length')
@@ -75,9 +67,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Login to Tencent CCR
-        if: >-
-          github.event_name != 'pull_request' &&
-          (github.event_name != 'workflow_dispatch' || inputs.push)
+        if: ${{ inputs.push }}
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -104,9 +94,7 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.context }}/${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
-          push: >-
-            ${{ github.event_name != 'pull_request' &&
-                (github.event_name != 'workflow_dispatch' || inputs.push) }}
+          push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
