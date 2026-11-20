@@ -1,5 +1,5 @@
 # 与 postgres/16 同结构，便于统一发布到 CCR
-ARG POSTGRES_IMAGE=public.ecr.aws/docker/library/postgres:15-bookworm
+ARG POSTGRES_IMAGE=public.ecr.aws/docker/library/postgres:17-bookworm
 FROM ${POSTGRES_IMAGE}
 
 ARG APT_DEBIAN_HOST=
@@ -22,9 +22,9 @@ RUN set -eux; \
 		echo "apt install attempt $attempt/8..."; \
 		if apt-get update \
 			&& apt-get install -y --no-install-recommends \
-				postgresql-15-pgvector \
-				postgresql-15-postgis-3 \
-				postgresql-15-postgis-3-scripts \
+				postgresql-17-pgvector \
+				postgresql-17-postgis-3 \
+				postgresql-17-postgis-3-scripts \
 				pgbouncer; \
 		then \
 			ok=1; \

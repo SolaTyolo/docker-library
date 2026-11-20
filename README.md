@@ -42,7 +42,7 @@ docker-library/
 │   └── woodpecker-agent/3.15/Dockerfile
 │
 ├── storage/                       # 数据存储与检索
-│   ├── postgres/15|16/
+│   ├── postgres/16|17|18/
 │   ├── redis/7/alpine/Dockerfile
 │   ├── elasticsearch/7.17|8.19/Dockerfile
 │   └── rustfs/1.0/Dockerfile
@@ -110,7 +110,7 @@ docker-library/
 
 | 名称 | 说明 | 主要 tag |
 |------|------|----------|
-| postgres | PG15 / PG16 + PostGIS / pgvector / PgBouncer（仅安装，不预启用） | `15`, `16` |
+| postgres | PG16 / PG17 / PG18 + PostGIS / pgvector / PgBouncer（仅安装，不预启用） | `16`, `17`, `18` |
 | redis | Redis 7 Alpine | `7`, `latest` |
 | elasticsearch | Elasticsearch 7 / 8 搜索与分析引擎 | `7.17.28`, `8.19.15`, `latest` |
 | rustfs | S3 兼容对象存储（MinIO 替代） | `1.0.1`, `latest` |
@@ -222,8 +222,9 @@ PUSH=0 ./scripts/build-push.sh loki
 
 ```yaml
 image: ccr.ccs.tencentyun.com/solat/redis:7
+image: ccr.ccs.tencentyun.com/solat/postgres:18
+image: ccr.ccs.tencentyun.com/solat/postgres:17
 image: ccr.ccs.tencentyun.com/solat/postgres:16
-image: ccr.ccs.tencentyun.com/solat/postgres:15
 image: ccr.ccs.tencentyun.com/solat/grafana:11.6.0
 image: ccr.ccs.tencentyun.com/solat/loki:3.4.6
 image: ccr.ccs.tencentyun.com/solat/elasticsearch:8.19.15

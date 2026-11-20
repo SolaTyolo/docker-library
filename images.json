@@ -88,15 +88,21 @@
     },
     {
       "name": "postgres",
-      "context": "storage/postgres/15",
-      "dockerfile": "Dockerfile",
-      "tags": ["15"]
-    },
-    {
-      "name": "postgres",
       "context": "storage/postgres/16",
       "dockerfile": "Dockerfile",
       "tags": ["16"]
+    },
+    {
+      "name": "postgres",
+      "context": "storage/postgres/17",
+      "dockerfile": "Dockerfile",
+      "tags": ["17"]
+    },
+    {
+      "name": "postgres",
+      "context": "storage/postgres/18",
+      "dockerfile": "Dockerfile",
+      "tags": ["18"]
     },
     {
       "name": "redis",
